@@ -1,0 +1,24 @@
+#!/bin/csh
+
+if ($#argv == 0 ) then
+   echo 'Please mention a branch name' && exit -1
+endif
+
+echo '======================'
+echo '=====Fetch Origin====='
+git fetch origin
+echo '======'
+
+echo '============================'
+echo '=====Cheking out branch====='
+git checkout $1
+echo '======'
+
+echo '======================'
+echo '=====Fetch Origin====='
+git fetch origin
+echo '======'
+
+echo '======================'
+echo '========Resetting====='
+git reset --hard origin/$1

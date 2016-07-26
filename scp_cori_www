@@ -1,0 +1,3 @@
+#!/bin/csh
+
+scp -r $1 {$cori}:/project/projectdirs/PNNL-PJR/www/bsingh/CAM_DIAG/

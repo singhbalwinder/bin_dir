@@ -1,0 +1,9 @@
+#!/usr/bin/env tcsh
+
+if ( $2 == "" ) then
+ find . -iname \*$1\*
+else
+ find . -iname \*$1\* | grep -v $2
+endif
+
+exit 0

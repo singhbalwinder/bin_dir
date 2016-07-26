@@ -1,0 +1,45 @@
+#!/bin/csh
+
+if ($#argv != 2 ) then
+   echo 'Please mention a branch name and next or master branch' && exit -1
+endif
+
+if ( $2 != 'next' && $2 != 'master'  ) then
+    echo 'The second argument has to be either master or next branch' && exit -1
+endif
+
+echo '============================='
+echo '      Cheking out branch     '
+echo '============================='
+git fetch origin|| echo 'Problem with initial git FETCH command' &&exit -1
+git checkout $1 || echo 'Problem in checking out BRANCH:'$1 &&exit -1
+echo '=================================='
+echo '      Fetch Origin after branch   '
+echo '=================================='
+git fetch origin|| echo 'Problem with 2nd git FETCH command' &&exit -1
+echo '=================================='
+echo '      Resetting '$1
+echo '=================================='
+git reset --hard origin/$1 || echo 'Problem with git RESET command for branch:'$1 &&exit -1
+echo '=================================='
+echo '      Cheking out '$2' branch '
+echo '=================================='
+git checkout $2 || echo 'Problem in checking out BRANCH:'$2 &&exit -1
+echo '=================================='
+echo '     Fetch Origin'
+echo '=================================='
+git fetch origin || echo 'Problem with git FETCH command' &&exit -1
+echo '=================================='
+echo '      Resetting '$2
+echo '=================================='
+git reset --hard origin/$2 || echo 'Problem with git RESET command for branch:'$2 &&exit -1
+
+echo '=================================='
+echo '      Merging '$1' into ' $2
+echo '=================================='
+git merge --no-ff $1|| echo 'Problem with git MERGE command' &&exit -1
+
+echo '=================================='
+echo '       git status'
+echo '=================================='
+git st
