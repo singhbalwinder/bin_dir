@@ -1,4 +1,8 @@
 #!/bin/csh
+Author: Balwinder Singh (balwinder.singh@pnnl.gov)
+
+# Takes two arguments :[branch-name] [master (or next)]
+# Merges branch and ask for commit message. If it doesn't ask for commit messages, use "git commit --amend"
 
 if ($#argv != 2 ) then
    echo 'Please mention a branch name and next or master branch' && exit -1
