@@ -38,6 +38,8 @@ if ( $clean == 1 ) then
 endif
 echo 'Remove Test status files...'
 /bin/rm TestStatus.log TestStatus CaseStatus
+echo 'Regenerate CaseStatus file ...'
+touch CaseStatus
 
 ./{$CASE}.test_build || echo 'Model failed to buils' && exit -1
 ./{$CASE}.submit
