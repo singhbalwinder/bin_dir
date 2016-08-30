@@ -36,5 +36,8 @@ if ( $clean == 1 ) then
     ./{$CASE}.clean_build $cmdargs    
     /bin/rm -rf $RUNDIR/*
 endif
+echo 'Remove Test status files...'
+/bin/rm TestStatus.log TestStatus CaseStatus
+
 ./{$CASE}.test_build || echo 'Model failed to buils' && exit -1
 ./{$CASE}.submit
