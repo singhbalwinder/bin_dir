@@ -1,10 +1,11 @@
 #!/bin/csh
-Author: Balwinder Singh (balwinder.singh@pnnl.gov)
+#set echo verbose 
+#Author: Balwinder Singh (balwinder.singh@pnnl.gov)
 
-# Takes two arguments :[branch-name] [master (or next)]
+# First two arguments are required :[branch-name] [master (or next)]
 # Merges branch and ask for commit message. If it doesn't ask for commit messages, use "git commit --amend"
 
-if ($#argv != 2 ) then
+if ($#argv < 2 ) then
    echo 'Please mention a branch name and next or master branch' && exit -1
 endif
 
@@ -12,19 +13,42 @@ if ( $2 != 'next' && $2 != 'master'  ) then
     echo 'The second argument has to be either master or next branch' && exit -1
 endif
 
+set isfork = `echo $1 |grep ':'|wc -l`
+
+if ( $isfork == 1 ) then
+    echo '============================='
+    echo '      Fork workflow....     '
+    echo '============================='
+
+    set fork_id   = `echo $1 |cut -f1 -d':'`/ACME
+    set branch    = `echo $1 | cut -f2 -d':'`
+    set origin_br = $fork_id    
+
+    git remote add $fork_id git@github.com:$fork_id    
+    #add slash to fork_id
+    set fork_id = `echo $fork_id`'/'
+else
+    echo '============================='
+    echo '      Non Fork workflow....     '
+    echo '============================='
+    set fork_id = ''
+    set origin_br = origin
+    set branch = $1
+endif
+
 echo '============================='
-echo '      Cheking out branch     '
+echo '      Checking out branch     '
 echo '============================='
-git fetch origin|| echo 'Problem with initial git FETCH command' &&exit -1
-git checkout $1 || echo 'Problem in checking out BRANCH:'$1 &&exit -1
+git fetch $origin_br|| echo 'Problem with initial git FETCH command' &&exit -1
+git checkout $fork_id$branch || echo 'Problem in checking out BRANCH:'$branch &&exit -1
 echo '=================================='
 echo '      Fetch Origin after branch   '
 echo '=================================='
-git fetch origin|| echo 'Problem with 2nd git FETCH command' &&exit -1
+git fetch $origin_br|| echo 'Problem with 2nd git FETCH command' &&exit -1
 echo '=================================='
-echo '      Resetting '$1
+echo '      Resetting '$branch
 echo '=================================='
-git reset --hard origin/$1 || echo 'Problem with git RESET command for branch:'$1 &&exit -1
+git reset --hard $origin_br/$branch || echo 'Problem with git RESET command for branch:'$branch &&exit -1
 echo '=================================='
 echo '      Cheking out '$2' branch '
 echo '=================================='
@@ -39,9 +63,9 @@ echo '=================================='
 git reset --hard origin/$2 || echo 'Problem with git RESET command for branch:'$2 &&exit -1
 
 echo '=================================='
-echo '      Merging '$1' into ' $2
+echo '      Merging '$branch' into ' $2
 echo '=================================='
-git merge --no-ff $1|| echo 'Problem with git MERGE command' &&exit -1
+git merge --no-ff $fork_id$branch|| echo 'Problem with git MERGE command' &&exit -1
 
 echo '=================================='
 echo '       git status'
